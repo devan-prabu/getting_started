@@ -1,0 +1,41 @@
+# The cheap gate that runs before any LLM spend (brief §6.3).
+# Rule: pass if >=1 award signal AND >=1 UAE signal AND 0 exclusions.
+# Matching is case-insensitive and whole-word/phrase (see src/radar/filters.py).
+
+award_signals:
+  - awarded
+  - wins contract
+  - won the contract
+  - main contractor
+  - contract award
+  - appointed
+  - letter of award
+  - LOA
+  - signed a contract
+  - construction contract
+  - groundbreaking
+  - mobilisation
+  - AED
+  - worth
+
+uae_signals:
+  - UAE
+  - United Arab Emirates
+  - Dubai
+  - Abu Dhabi
+  - Sharjah
+  - Ajman
+  - Ras Al Khaimah
+  - Fujairah
+  - Umm Al Quwain
+  - AED
+  - dirham
+
+exclusions:
+  - job vacancy
+  - hiring now
+  - horoscope
+  - share price target
+  - cryptocurrency
+  - match report
+  - sponsored content

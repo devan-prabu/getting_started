@@ -1,0 +1,254 @@
+# Canonical contractor/developer names, aliases and careers pages.
+#
+# `radar init` loads this into the `companies` table. Phase 0 does not do fuzzy
+# matching against it (that is normalise.py in Phase 2) — this file exists now
+# so the schema and the loader are exercised and so the watchlist is captured
+# while it is fresh.
+#
+# HONESTY NOTE (DECISIONS.md D-01): every `careers_url` below is an UNVERIFIED
+# candidate. The build sandbox could not reach any of these hosts, so none were
+# fetched. Confirm them before relying on the Phase 3 alert link.
+#
+# tier: 1 = top target, 2 = solid, 3 = fringe
+# is_watchlist: 1 = alert loudly on anything this company wins
+
+companies:
+  # --- Contractors (the watchlist) ---------------------------------------
+  - canonical_name: ALEC Engineering and Contracting
+    aliases: ["ALEC", "ALEC L.L.C.", "ALEC LLC", "ALEC Engineering & Contracting"]
+    careers_url: "https://www.alec.ae/careers/"
+    ats: null
+    tier: 1
+    is_watchlist: 1
+    parent: Investment Corporation of Dubai
+    notes: Large-format towers, malls, airports. Heavy QA/QC and QS intake at mobilisation.
+
+  - canonical_name: ASGC Construction
+    aliases: ["ASGC", "ASGC Group", "Al Shafar General Contracting"]
+    careers_url: "https://www.asgcgroup.com/careers"
+    ats: null
+    tier: 1
+    is_watchlist: 1
+    parent: null
+    notes: null
+
+  - canonical_name: Khansaheb
+    aliases: ["Khansaheb Civil Engineering", "Ali & Sons Khansaheb"]
+    careers_url: "https://www.khansaheb.ae/careers"
+    ats: null
+    tier: 1
+    is_watchlist: 1
+    parent: null
+    notes: null
+
+  - canonical_name: Consolidated Contractors Company
+    aliases: ["CCC", "CCC Underwater Engineering", "Consolidated Contractors", "CCC UAE"]
+    careers_url: "https://www.ccc.net/careers/"
+    ats: null
+    tier: 1
+    is_watchlist: 1
+    parent: null
+    notes: Regional; UAE awards are only part of its pipeline. Filter by emirate.
+
+  - canonical_name: Shapoorji Pallonji Mideast
+    aliases: ["Shapoorji Pallonji", "SP Mideast", "Shapoorji Pallonji Mid East"]
+    careers_url: "https://www.shapoorjipallonji.com/careers"
+    ats: null
+    tier: 2
+    is_watchlist: 1
+    parent: Shapoorji Pallonji Group
+    notes: null
+
+  - canonical_name: Larsen & Toubro
+    aliases: ["L&T", "Larsen and Toubro", "L and T", "LTIDPL", "L&T Construction"]
+    careers_url: "https://www.larsentoubro.com/corporate/careers/"
+    ats: null
+    tier: 2
+    is_watchlist: 1
+    parent: null
+    notes: null
+
+  - canonical_name: NMDC Group
+    aliases: ["NMDC", "National Marine Dredging Company", "NMDC Energy", "National Marine Dredging Co"]
+    careers_url: "https://www.nmdc.com/careers"
+    ats: null
+    tier: 1
+    is_watchlist: 1
+    parent: null
+    notes: Marine/dredging plus land contracting since the NPCC merger. ADX listed.
+
+  - canonical_name: Archirodon
+    aliases: ["Archirodon Group", "Archirodon Construction Overseas"]
+    careers_url: "https://www.archirodon.net/careers"
+    ats: null
+    tier: 2
+    is_watchlist: 1
+    parent: null
+    notes: Marine and heavy civils.
+
+  - canonical_name: Trojan General Contracting
+    aliases: ["Trojan", "Trojan Construction Group", "Trojan Holding", "TGC"]
+    careers_url: "https://www.trojanholding.ae/careers"
+    ats: null
+    tier: 1
+    is_watchlist: 1
+    parent: Alpha Dhabi Holding
+    notes: >-
+      Parent/subsidiary matters here — awards get reported under Trojan Holding
+      or Alpha Dhabi, but hiring runs through Trojan General Contracting.
+
+  - canonical_name: Ginco Contracting
+    aliases: ["Ginco", "Ginco General Contracting", "GINCO Group"]
+    careers_url: "https://www.gincogroup.com/careers"
+    ats: null
+    tier: 2
+    is_watchlist: 1
+    parent: null
+    notes: null
+
+  - canonical_name: China State Construction Engineering Corporation Middle East
+    aliases: ["CSCEC", "CSCEC ME", "China State Construction", "China State"]
+    careers_url: "https://www.cscecme.com/careers"
+    ats: null
+    tier: 2
+    is_watchlist: 1
+    parent: CSCEC
+    notes: null
+
+  - canonical_name: China Harbour Engineering Company
+    aliases: ["China Harbour", "CHEC", "China Harbour Engineering"]
+    careers_url: "https://www.chec.bj.cn/en/"
+    ats: null
+    tier: 3
+    is_watchlist: 1
+    parent: China Communications Construction Company
+    notes: Careers routing unclear; may hire via local JV entities.
+
+  - canonical_name: Binghatti
+    aliases: ["Binghatti Developers", "Binghatti Holding"]
+    careers_url: "https://www.binghatti.com/careers/"
+    ats: null
+    tier: 2
+    is_watchlist: 1
+    parent: null
+    notes: Developer that self-performs, so it appears on both sides of an award.
+
+  - canonical_name: Al Marwan General Contracting
+    aliases: ["Al Marwan", "Al Marwan Group"]
+    careers_url: "https://almarwan.com/careers/"
+    ats: null
+    tier: 3
+    is_watchlist: 1
+    parent: null
+    notes: null
+
+  - canonical_name: Venco Imtiaz Contracting
+    aliases: ["Venco Imtiaz", "Imtiaz Contracting", "Venco"]
+    careers_url: "https://www.vencoimtiaz.com/careers"
+    ats: null
+    tier: 3
+    is_watchlist: 1
+    parent: null
+    notes: null
+
+  - canonical_name: United Al Saqer Group
+    aliases: ["United Al Saqer", "Al Saqer Group", "UASG"]
+    careers_url: "https://www.unitedalsaqergroup.com/careers"
+    ats: null
+    tier: 3
+    is_watchlist: 1
+    parent: null
+    notes: null
+
+  # --- Developers / clients ----------------------------------------------
+  # Not hiring targets themselves, but naming them lets the extractor tell the
+  # client apart from the winner (brief §13.3).
+  - canonical_name: Emaar Properties
+    aliases: ["Emaar", "Emaar Development", "Emaar Properties PJSC"]
+    careers_url: "https://www.emaar.com/en/careers/"
+    ats: null
+    tier: 2
+    is_watchlist: 0
+    parent: null
+    notes: Client. DFM listed.
+
+  - canonical_name: Aldar Properties
+    aliases: ["Aldar", "Aldar Properties PJSC", "Aldar Projects"]
+    careers_url: "https://www.aldar.com/en/careers"
+    ats: null
+    tier: 2
+    is_watchlist: 0
+    parent: null
+    notes: Client. ADX listed.
+
+  - canonical_name: Nakheel
+    aliases: ["Nakheel PJSC", "Nakheel Properties"]
+    careers_url: "https://www.nakheel.com/en/careers"
+    ats: null
+    tier: 3
+    is_watchlist: 0
+    parent: Dubai Holding
+    notes: Client.
+
+  - canonical_name: Modon Properties
+    aliases: ["Modon", "Modon Holding"]
+    careers_url: "https://www.modon.ae/careers"
+    ats: null
+    tier: 3
+    is_watchlist: 0
+    parent: null
+    notes: Client. ADX listed.
+
+  - canonical_name: DAMAC Properties
+    aliases: ["DAMAC", "Damac Properties Dubai Co"]
+    careers_url: "https://www.damacproperties.com/en/careers/"
+    ats: null
+    tier: 3
+    is_watchlist: 0
+    parent: null
+    notes: Client.
+
+  - canonical_name: Sobha Realty
+    aliases: ["Sobha", "Sobha Constructions", "Sobha Group"]
+    careers_url: "https://www.sobharealty.com/careers/"
+    ats: null
+    tier: 2
+    is_watchlist: 0
+    parent: null
+    notes: Self-performs construction, so it can appear as the contractor too.
+
+  - canonical_name: Majid Al Futtaim
+    aliases: ["MAF", "Majid Al Futtaim Properties", "Majid Al Futtaim Holding"]
+    careers_url: "https://www.majidalfuttaim.com/en/careers"
+    ats: null
+    tier: 3
+    is_watchlist: 0
+    parent: null
+    notes: Client.
+
+  - canonical_name: Etihad Rail
+    aliases: ["Etihad Rail DB", "Union Railway"]
+    careers_url: "https://www.etihadrail.ae/careers/"
+    ats: null
+    tier: 2
+    is_watchlist: 0
+    parent: null
+    notes: Client. Package-level awards rarely reach the news; Phase 1 portal work.
+
+  - canonical_name: Roads and Transport Authority
+    aliases: ["RTA", "RTA Dubai", "Dubai RTA"]
+    careers_url: "https://www.rta.ae/wps/portal/rta/ae/careers"
+    ats: null
+    tier: 2
+    is_watchlist: 0
+    parent: null
+    notes: Client. Infrastructure packages.
+
+  - canonical_name: Dubai Electricity and Water Authority
+    aliases: ["DEWA", "DEWA PJSC"]
+    careers_url: "https://www.dewa.gov.ae/en/about-us/careers"
+    ats: null
+    tier: 2
+    is_watchlist: 0
+    parent: null
+    notes: Client. Awards via Dubai eSupply.
