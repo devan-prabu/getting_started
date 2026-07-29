@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /search
+Disallow: /admin/
+Allow: /rss/
+Crawl-delay: 1
+
+Sitemap: https://feeds.test/sitemap.xml
