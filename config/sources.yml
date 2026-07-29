@@ -1,0 +1,82 @@
+# UAE Project Radar — source registry.
+#
+# Phase 0 scope is Google News RSS only. Newsrooms, exchange disclosures and
+# tender portals land in Phase 1.
+#
+# HONESTY NOTE (see DECISIONS.md D-01): this repo was built in a sandbox whose
+# egress policy blocks every host except package registries and GitHub, so none
+# of these URLs could be fetched at build time. Nothing here is claimed to be
+# live. Every entry is `status: unverified`. Run `radar sources check` on a
+# machine with normal internet access; it rewrites `status` and `last_checked`
+# in place to `live` or `dead` with a reason.
+#
+# status: unverified | live | dead
+#
+# Entry types:
+#   google_news  — `query` is required; the URL is built by collect.py from
+#                  `google_news_base` below. Do not hand-write these URLs.
+#   rss          — `url` is required, points at a real feed.
+
+google_news_base: "https://news.google.com/rss/search"
+google_news_params:
+  hl: en
+  gl: AE
+  ceid: "AE:en"
+
+sources:
+  - id: gnews_award_generic
+    type: google_news
+    query: '("awarded contract" OR "wins contract" OR "main contractor" OR "contract award") (UAE OR Dubai OR "Abu Dhabi")'
+    enabled: true
+    status: unverified
+    last_checked: null
+    notes: >-
+      The workhorse query. Broad by design; the keyword gate and the Phase 2
+      extractor do the narrowing.
+
+  - id: gnews_construction
+    type: google_news
+    query: '("construction contract" OR "AED" OR "construction award") ("Abu Dhabi" OR Dubai) when:7d'
+    enabled: true
+    status: unverified
+    last_checked: null
+    notes: >-
+      High volume, so `when:7d` keeps the result set inside Google News RSS's
+      ~100-item cap.
+
+  - id: gnews_appoints
+    type: google_news
+    query: '("appoints contractor" OR "has appointed" OR "selected as main contractor") UAE'
+    enabled: true
+    status: unverified
+    last_checked: null
+    notes: >-
+      Catches award language that avoids the word "awarded". Note the
+      developer/contractor direction is often inverted here — the Phase 2 LLM
+      stage exists for exactly this (brief §13.3).
+
+  - id: gnews_groundbreak
+    type: google_news
+    query: '(groundbreaking OR "breaks ground" OR mobilisation) construction UAE'
+    enabled: true
+    status: unverified
+    last_checked: null
+    notes: >-
+      Groundbreaking usually trails the award by weeks, so this is a late
+      signal. Kept because it confirms awards that were never announced.
+
+  - id: gnews_co_alec
+    type: google_news
+    query: '"ALEC" contract award'
+    enabled: true
+    status: unverified
+    last_checked: null
+    notes: Tier-1 contractor watch. "ALEC" is a short token; expect some noise.
+
+  - id: gnews_dev_emaar
+    type: google_news
+    query: 'Emaar contractor awarded'
+    enabled: true
+    status: unverified
+    last_checked: null
+    notes: Major developer watch. Emaar names its main contractor in most releases.

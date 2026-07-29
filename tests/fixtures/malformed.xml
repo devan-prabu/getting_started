@@ -1,0 +1,4 @@
+<!DOCTYPE html>
+<html><head><title>429 Too Many Requests</title></head>
+<body><h1>Error 429</h1><p>Rate limited. This is what a feed endpoint returns when
+it is unhappy, and it must not be parsed as a feed.</p></body></html>
