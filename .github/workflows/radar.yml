@@ -1,0 +1,102 @@
+name: radar
+
+on:
+  schedule:
+    # Every 6 hours. The hiring signal has weeks of lead time, so this is
+    # plenty (brief §1, non-goals).
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write # needed to commit the DB back (DECISIONS.md D-08)
+
+concurrency:
+  # Two runs writing data/radar.db at once would corrupt it. Never cancel a
+  # run in progress; queue behind it.
+  group: radar-run
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Test
+        run: pytest -q
+
+      - name: Init database
+        run: radar init
+
+      - name: Run the pipeline
+        id: pipeline
+        env:
+          ALERT_CHANNELS: ${{ vars.ALERT_CHANNELS || 'telegram' }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: radar run
+
+      - name: Commit the database
+        # Runs even when the pipeline failed, so a partial collection is not
+        # thrown away — raw_items is the durable log (brief §2).
+        if: always()
+        run: |
+          if [ ! -f data/radar.db ]; then
+            echo "no database to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Checkpoint the WAL so the committed file is self-contained.
+          python -c "import sqlite3,sys; c=sqlite3.connect('data/radar.db'); c.execute('PRAGMA wal_checkpoint(TRUNCATE)'); c.close()"
+          git add -f data/radar.db
+          if git diff --cached --quiet; then
+            echo "no database changes"
+            exit 0
+          fi
+          git commit -m "chore: radar state $(date -u +%Y-%m-%dT%H:%MZ)"
+          # Another scheduled run may have pushed while this one was working.
+          for attempt in 1 2 3 4; do
+            if git push; then exit 0; fi
+            echo "push failed (attempt $attempt); rebasing and retrying"
+            git pull --rebase --autostash || true
+            sleep $((2 ** attempt))
+          done
+          echo "could not push the database after 4 attempts"
+          exit 1
+
+      - name: Report failure to Telegram
+        # Silent failure would be worse than no tool at all (brief §8).
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "Telegram not configured; skipping failure notice"
+            exit 0
+          fi
+          curl -sS -X POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+            -d "disable_web_page_preview=true" \
+            -d "text=⚠️ UAE Project Radar run failed. ${RUN_URL}" > /dev/null
