@@ -1,0 +1,446 @@
+# Topic taxonomy and the offline question bank.
+#
+# Two jobs:
+#   1. `weight` and `stage` drive the scheduler's topic rotation.
+#   2. `seeds` are real questions used when the Claude generator is unavailable
+#      (no ANTHROPIC_API_KEY, no network, or an API error). The agent must still
+#      fire every day (DECISIONS.md D-16), so the bank is not a token gesture —
+#      it is the guaranteed floor.
+#
+# `expect` is the answer key. The heuristic grader scores coverage against it,
+# and the Claude grader is given it as the rubric. Write them as the phrases a
+# good answer actually contains, not as a model answer.
+#
+# `difficulty`: 1 gentle → 5 panel-grilling.
+
+topics:
+  - id: qms_iso
+    name: QMS and ISO 9001
+    weight: 1.2
+    stages: [technical, consultant_panel]
+    seeds:
+      - q: "Walk me through what happens in your project quality plan between a
+          drawing being approved and the work being accepted on site."
+        expect: [approved shop drawing, method statement, material submittal, ITP,
+                 inspection request, hold point, checklist, records, handover]
+        difficulty: 2
+      - q: "ISO 9001:2015 — what is the difference between a correction, a
+          corrective action and a preventive action? Give one site example of each."
+        expect: [correction fixes the nonconformity, corrective action removes the
+                 root cause, recurrence, preventive action addresses potential,
+                 root cause analysis, effectiveness check]
+        difficulty: 3
+      - q: "An internal audit raises a finding that your ITPs are not being signed
+          at the hold points. How do you close it out properly?"
+        expect: [root cause, retraining, revise ITP, verification of records,
+                 corrective action report, effectiveness review, close out with
+                 objective evidence]
+        difficulty: 4
+      - q: "What does a quality objective look like on a landscape package, and
+          how would you measure it monthly?"
+        expect: [measurable, first time pass rate, NCR count, rework cost,
+                 closure time, target, trend, management review]
+        difficulty: 3
+      - q: "Explain the ITP in your own words to a client who has never seen one —
+          what do S, W, H and R mean in the intervention column?"
+        expect: [surveillance, witness, hold point, review of records, cannot
+                 proceed without, notification period, consultant, contractor]
+        difficulty: 2
+
+  - id: inspection_requests
+    name: WIR / MIR and the inspection cycle
+    weight: 1.3
+    stages: [technical, consultant_panel]
+    seeds:
+      - q: "Your WIR for a subbase layer is rejected code C — revise and resubmit.
+          Talk me through the next 24 hours."
+        expect: [read the rejection reason, verify on site, rectify, re-survey or
+                 retest, update the register, re-raise with reference to the
+                 original, notify consultant, prevent recurrence]
+        difficulty: 2
+      - q: "What must be in place before you raise a WIR for a concrete pour, and
+          who signs what?"
+        expect: [approved shop drawing, approved method statement, material
+                 approval, previous activity accepted, survey check, pre-pour
+                 checklist, reinforcement inspection, formwork, notification
+                 period, consultant signature]
+        difficulty: 3
+      - q: "How do you keep a WIR register meaningful when there are 400 open
+          lines? What do you actually report to the PM every week?"
+        expect: [status codes, ageing, open beyond target, approval rate,
+                 rejections by reason, blocking activities, trend, one page]
+        difficulty: 3
+      - q: "A consultant inspector verbally approves work but will not sign the
+          WIR until next week. The pour is tomorrow. What do you do?"
+        expect: [nothing proceeds on a verbal, escalate in writing, RFI or letter,
+                 record the delay, notify PM, do not pour, protect the record]
+        difficulty: 4
+      - q: "Difference between a MIR and a material submittal — and what do you
+          check on the MIR that the submittal never tells you?"
+        expect: [submittal is prior approval of the product, MIR is delivered
+                 material at site, batch, delivery note, mill certificate,
+                 damage, quantity, storage, shelf life, matches the approved
+                 sample]
+        difficulty: 2
+
+  - id: concrete
+    name: Concrete
+    weight: 1.2
+    stages: [technical]
+    seeds:
+      - q: "Cubes at 7 days came back at 60% of the design strength. Panic or not?
+          Explain your reasoning and your next steps."
+        expect: [7 day is typically 65 to 70 percent, check the trend, verify
+                 curing and sampling, wait for 28 day, review the mix, check
+                 batch records, do not break out yet, notify consultant]
+        difficulty: 3
+      - q: "The 28-day cubes fail. Walk me through the full non-conformity route."
+        expect: [raise NCR, quarantine the element, review batch and delivery,
+                 core testing, rebound hammer, structural assessment by the
+                 designer, repair or replace proposal, consultant approval,
+                 close with evidence]
+        difficulty: 4
+      - q: "A truck arrives at 45 minutes past batching with a slump of 200 when
+          the approved mix says 120 ± 25. What happens?"
+        expect: [reject the load, no water added on site, check the delivery
+                 ticket time, temperature, retarder, record it, inform the
+                 batching plant, do not place]
+        difficulty: 2
+      - q: "What are you personally checking in the hour before a villa raft pour
+          in July in the UAE?"
+        expect: [ambient and concrete temperature, ice or chilled water, curing
+                 arrangements, reinforcement cover, formwork stability, cleanliness,
+                 embedded items, access for vibrators, standby vibrator, pour
+                 sequence, cold joint plan, blockouts]
+        difficulty: 3
+      - q: "Explain cold joints, construction joints and expansion joints, and how
+          each shows up in your inspection checklist."
+        expect: [planned versus unplanned, waterstop, joint preparation, laitance
+                 removal, roughening, bonding agent, movement, sealant, location
+                 approved on drawing]
+        difficulty: 3
+
+  - id: earthworks
+    name: Earthworks, subbase and compaction
+    weight: 1.0
+    stages: [technical]
+    seeds:
+      - q: "How do you decide a subbase layer is acceptable? Give me the numbers
+          you look for."
+        expect: [field density test, modified proctor, 95 percent, layer thickness,
+                 moisture content, optimum, levels and tolerance, proof rolling,
+                 frequency of tests, lot size]
+        difficulty: 2
+      - q: "The FDT passes but the surface deflects visibly under a loaded truck.
+          What do you conclude?"
+        expect: [test location not representative, soft spot below, subgrade
+                 failure, moisture, proof roll, retest, investigate the layer
+                 beneath, do not accept on paper alone]
+        difficulty: 4
+      - q: "What is the difference between CBR, plate load and FDT, and when would
+          you ask for each on a landscape package?"
+        expect: [CBR is a design strength index, plate load measures bearing on
+                 site, FDT measures achieved compaction, laboratory versus field,
+                 acceptance criteria differ]
+        difficulty: 3
+
+  - id: landscape_hardscape
+    name: Landscape and hardscape works
+    weight: 1.4
+    stages: [technical, consultant_panel]
+    seeds:
+      - q: "Your strongest ground: take me through the QA sequence for an interlock
+          paving area from subgrade to handover."
+        expect: [subgrade acceptance, subbase compaction and levels, road base,
+                 bedding sand thickness, laying pattern, edge restraint, kerb line,
+                 joint sand, compaction of pavers, levels and falls, cross fall to
+                 drainage, protection, cleaning, snagging]
+        difficulty: 2
+      - q: "Banding concrete on a villa road is cracking within a week of pouring.
+          Diagnose it."
+        expect: [plastic shrinkage, curing failure, joint spacing, subbase
+                 movement, mix water content, hot weather, saw cut timing,
+                 reinforcement, restraint, investigate then NCR]
+        difficulty: 4
+      - q: "What tolerances do you hold on kerb line, level and gradient, and how
+          do you verify them?"
+        expect: [survey check, string line, level tolerance in millimetres,
+                 alignment, falls toward the drain, ponding check, joint width,
+                 as-built survey, consultant witness]
+        difficulty: 3
+      - q: "The architect rejects the shade variation on a delivered batch of
+          natural stone that matched the approved sample. Who is right?"
+        expect: [approved sample and range, natural variation, mock up panel,
+                 blending from multiple pallets, control samples retained,
+                 documented acceptance criteria, escalate with the submittal
+                 record]
+        difficulty: 4
+      - q: "How do you inspect softscape — planting, soil mix and irrigation —
+          differently from hardscape?"
+        expect: [soil test and mix ratio, pit size, root ball condition, plant
+                 quality at nursery, staking, irrigation pressure test, coverage
+                 test, drainage, maintenance period, replacement liability]
+        difficulty: 3
+
+  - id: waterproofing
+    name: Waterproofing, water features and lagoons
+    weight: 1.2
+    stages: [technical]
+    seeds:
+      - q: "Walk me through a water-tightness test on a lagoon or water feature —
+          duration, acceptance and what you record."
+        expect: [fill in stages, stabilisation period, 24 to 72 hours, drop in
+                 millimetres per day, evaporation compensation, allowable loss,
+                 visual inspection of joints, record levels and temperature,
+                 consultant witness, retest after repair]
+        difficulty: 3
+      - q: "What do you inspect before waterproofing is applied, and what stops the
+          application on the day?"
+        expect: [substrate condition, moisture content, curing period, surface
+                 preparation, primer, ambient temperature and humidity, cracks
+                 repaired, corners and fillets, penetrations sealed, wet film
+                 thickness, holiday test, protection screed timing]
+        difficulty: 3
+      - q: "A pump room is finished but the client complains of noise and vibration
+          at night. Was that ever a QA issue?"
+        expect: [approved submittal for anti vibration mounts, inertia base,
+                 installation per manufacturer, snagging, commissioning records,
+                 design versus workmanship, investigate before accepting blame]
+        difficulty: 4
+
+  - id: submittals
+    name: Submittals, shop drawings and prequalification
+    weight: 1.1
+    stages: [technical, consultant_panel]
+    seeds:
+      - q: "How do you run a submittal register so that nothing blocks procurement?
+          What is your lead-time logic?"
+        expect: [link to procurement and programme, review period, resubmission
+                 allowance, long lead items first, status codes, ageing report,
+                 chase list, escalation, forecast approval date]
+        difficulty: 3
+      - q: "A material submittal comes back code B — approved as noted. Can the
+          supplier ship?"
+        expect: [yes with the noted comments incorporated, comments must be
+                 actioned and recorded, no resubmission required unless stated,
+                 confirm with the consultant, update the register, brief the site
+                 team on the comments]
+        difficulty: 2
+      - q: "What does subcontractor prequalification actually check, and what would
+          make you reject one?"
+        expect: [experience on similar scope, manpower and equipment, QMS
+                 certification, previous references, financial capacity, HSE
+                 record, sample of past inspection records, no relevant
+                 experience means reject]
+        difficulty: 3
+
+  - id: ncr_sor
+    name: NCRs, site observations and close-out
+    weight: 1.2
+    stages: [technical, consultant_panel, behavioural]
+    seeds:
+      - q: "When does an observation become an NCR? Where do you draw the line?"
+        expect: [severity, contract or specification breach, repeatability,
+                 immediate rectification versus documented nonconformity, SOR for
+                 minor observations, escalation if unclosed, judgement documented]
+        difficulty: 3
+      - q: "You have 12 open NCRs and the client is asking why. What does your
+          answer look like?"
+        expect: [categorise by root cause, ageing, owner per NCR, closure plan
+                 with dates, evidence of the systemic fix, trend showing decline,
+                 no excuses, weekly tracking]
+        difficulty: 4
+      - q: "Give me an NCR you have closed end to end. Root cause, action,
+          verification."
+        expect: [specific example, what deviated, from which specification, root
+                 cause not just the symptom, corrective action, verification
+                 evidence, preventive measure, lesson applied elsewhere]
+        difficulty: 3
+
+  - id: consultancy_side
+    name: The consultancy / supervision side
+    weight: 1.5
+    stages: [consultant_panel, client_facing]
+    seeds:
+      - q: "You have always been contractor-side. As a consultant's QA/QC engineer,
+          what actually changes in your day?"
+        expect: [verify rather than produce, witness and approve, protect the
+                 client and the specification, no production pressure, documented
+                 impartiality, instruct through the RE, cannot direct the
+                 contractor's means and methods, records for the employer]
+        difficulty: 4
+      - q: "Who is the Engineer, the Resident Engineer and the ARE, and where would
+          you sit in that structure?"
+        expect: [Engineer under the contract, RE leads site supervision, ARE by
+                 discipline, inspectors report to ARE, instructions issued by the
+                 Engineer, contractor takes instruction not advice]
+        difficulty: 3
+      - q: "A contractor asks you how to fix a defect. Do you tell them?"
+        expect: [advise on the requirement not the method, contractor owns means
+                 and methods, avoid taking design or method liability, require a
+                 proposal in writing, review and approve or reject, record it]
+        difficulty: 4
+      - q: "Which FIDIC clauses actually touch your job as a site quality engineer?"
+        expect: [clause 7 plant materials and workmanship, testing, rejection,
+                 remedial work, clause 9 tests on completion, clause 11 defects
+                 liability, clause 4 contractor obligations, notices in writing]
+        difficulty: 5
+      - q: "Why should a consultancy hire someone from the contracting side rather
+          than an experienced consultant inspector?"
+        expect: [knows how the work is actually built, spots the shortcut before
+                 it happens, realistic on programme, strong record discipline,
+                 already speaks the submittal language, brings the contractor's
+                 perspective without the contractor's incentives]
+        difficulty: 3
+
+  - id: standards
+    name: Standards, specifications and authorities
+    weight: 1.0
+    stages: [technical]
+    seeds:
+      - q: "Which standard governs your concrete testing, and what does it actually
+          say about sampling frequency?"
+        expect: [BS EN or ASTM reference, project specification takes precedence,
+                 frequency per volume or per pour, minimum sets, cube versus
+                 cylinder, named standard in the ITP]
+        difficulty: 3
+      - q: "Specification says one thing, the approved drawing says another. What
+          governs?"
+        expect: [contract order of precedence, raise an RFI, do not decide alone,
+                 written clarification from the Engineer, record the resolution,
+                 update the ITP or checklist]
+        difficulty: 3
+      - q: "What does a Dubai Municipality or ADM inspection expect to see from the
+          quality file at a stage inspection?"
+        expect: [approved drawings, test certificates from an approved laboratory,
+                 inspection records signed, material approvals, third party test
+                 reports, as-built, authority checklist, previous stage clearance]
+        difficulty: 4
+
+  - id: documentation
+    name: Records, as-builts and handover
+    weight: 1.0
+    stages: [technical, client_facing]
+    seeds:
+      - q: "What goes into a handover dossier for a landscape package, and when do
+          you start building it?"
+        expect: [from day one not at the end, approved submittals, test reports,
+                 signed inspection records, as built drawings, warranties, O and M
+                 manuals, training records, snag closure evidence, index]
+        difficulty: 2
+      - q: "How do you run snagging so the client's list does not double at
+          handover?"
+        expect: [pre snag internally first, zone by zone, log with photo and
+                 location, owner and date, re-inspection, closure evidence, trend
+                 by trade, protection of completed work, sign off per zone]
+        difficulty: 3
+
+  - id: behavioural
+    name: Behavioural and competency (STAR)
+    weight: 1.3
+    stages: [behavioural, hr_screen]
+    seeds:
+      - q: "Tell me about a time you stopped work. What did it cost, and would you
+          do it again?"
+        expect: [specific situation, what the risk was, who you told, how you
+                 documented it, the outcome, cost or delay owned honestly, what
+                 changed afterwards, STAR structure]
+        difficulty: 3
+      - q: "Describe a disagreement with a project manager who wanted to proceed
+          without approval. How did it end?"
+        expect: [specific example, position stated calmly, escalated properly,
+                 written record, offered an alternative, respected the hierarchy,
+                 relationship preserved, result]
+        difficulty: 4
+      - q: "What is the biggest quality mistake you have personally made?"
+        expect: [real mistake owned, no blame shifting, immediate action taken,
+                 what it taught, systemic change made afterwards, no fake
+                 weakness]
+        difficulty: 4
+      - q: "Give me a number that shows you improved quality on your project."
+        expect: [quantified, first time approval rate, NCR reduction, rework cost
+                 saved, WIR turnaround, baseline and after, how it was measured]
+        difficulty: 3
+      - q: "How do you handle a foreman who keeps ignoring your instruction?"
+        expect: [direct conversation first, explain the why not just the rule,
+                 involve his supervisor, document if it repeats, escalate to
+                 project manager, keep it professional, follow up]
+        difficulty: 3
+
+  - id: hr_screen
+    name: HR screen and positioning
+    weight: 1.1
+    stages: [hr_screen]
+    seeds:
+      - q: "Tell me about yourself in ninety seconds."
+        expect: [current role and project named, scope and scale, two or three
+                 concrete achievements, the niche stated, why consultancy, ends
+                 pointing at this role, no life story]
+        difficulty: 2
+      - q: "Why are you leaving Proscape?"
+        expect: [forward looking not negative, supervision side ambition, scope
+                 and level growth, respect for current employer, specific about
+                 what this role offers, no salary complaint as the headline]
+        difficulty: 3
+      - q: "Why this company specifically, and what do you know about our projects
+          in the UAE?"
+        expect: [named project or sector, role families they hire, why the fit,
+                 what you bring to their supervision team, researched not generic]
+        difficulty: 4
+      - q: "Where do you see yourself in five years?"
+        expect: [QA/QC lead or manager on the supervision side, chartered or
+                 certified path, larger project scale, realistic, tied to their
+                 structure]
+        difficulty: 2
+
+  - id: negotiation
+    name: Salary, offer and exit
+    weight: 1.0
+    stages: [hr_screen, behavioural]
+    seeds:
+      - q: "What is your current salary, and what are you expecting?"
+        expect: [state the total package not just basic, expectation as a
+                 researched range, justified by scope and market, flexible on
+                 structure not on the floor, ask about their band, do not anchor
+                 low]
+        difficulty: 4
+      - q: "Your expectation is above our band. Can you move?"
+        expect: [ask what the band includes, allowances and family status,
+                 total value not basic alone, hold the floor politely, request
+                 review at confirmation, willing to walk away]
+        difficulty: 5
+      - q: "We can offer the same package you have now, but with a better name on
+          the CV. Deal?"
+        expect: [name value acknowledged, but the move must beat current, state
+                 the minimum, ask about progression and review timing, do not
+                 accept on the spot]
+        difficulty: 4
+      - q: "How would you resign from Proscape without burning the bridge?"
+        expect: [notice period honoured, written resignation, handover plan,
+                 registers and files organised, no counter offer drama, thank
+                 them, references preserved]
+        difficulty: 2
+
+  - id: company_specific
+    name: Company-specific and closing questions
+    weight: 0.9
+    stages: [consultant_panel, client_facing]
+    seeds:
+      - q: "A Parsons or KEO panel asks: what would your first thirty days on our
+          supervision team look like?"
+        expect: [read the contract and specification, review the ITPs and
+                 approved submittals, walk the site with the ARE, understand the
+                 reporting format, meet the contractor's QA team, no changes in
+                 week one, quick wins in records]
+        difficulty: 4
+      - q: "What questions do you have for us?"
+        expect: [project stage and duration, team structure and who you report to,
+                 how quality issues are escalated, what success looks like at six
+                 months, progression path, never no questions]
+        difficulty: 2
+      - q: "Our client is difficult and the programme is behind. How do you keep
+          quality from being the first thing dropped?"
+        expect: [risk based inspection focus, hold points defended, early
+                 involvement not policing at the end, data to show cost of rework,
+                 escalate with evidence, propose sequencing help]
+        difficulty: 5
