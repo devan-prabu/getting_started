@@ -1,0 +1,109 @@
+name: prep
+
+on:
+  schedule:
+    # Every two hours. `prep run` polls your replies each time but only sends a
+    # drill once, when it is past the local ask hour in config/profile.yml. The
+    # two-hour cadence is what makes replies get graded the same evening.
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
+    inputs:
+      force_ask:
+        description: "Send a drill now, even if one already went out today"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write # commits data/prep.db and the adaptive block back
+
+concurrency:
+  # Two runs writing data/prep.db at once would corrupt it, and two runs asking
+  # at once would double the drill. Queue, never cancel.
+  group: prep-run
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Test
+        run: pytest -q tests/test_prep_*.py
+
+      - name: Init database
+        run: prep init
+
+      - name: Poll, grade, adapt, ask
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PREP_MODEL: ${{ vars.PREP_MODEL || 'claude-sonnet-5' }}
+        run: prep run
+
+      - name: Force a drill on manual dispatch
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.force_ask }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: prep ask --force
+
+      - name: Commit the state
+        # Runs even on failure: answers already collected must not be thrown
+        # away, and the adaptive block may already have been rewritten.
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f data/prep.db ]; then
+            # Checkpoint the WAL so the committed file is self-contained.
+            python -c "import sqlite3; c=sqlite3.connect('data/prep.db'); c.execute('PRAGMA wal_checkpoint(TRUNCATE)'); c.close()"
+            git add -f data/prep.db
+          fi
+          # The adaptive block is rewritten by `prep adapt` — that is state too.
+          git add config/profile.yml
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+            exit 0
+          fi
+          git commit -m "chore: prep state $(date -u +%Y-%m-%dT%H:%MZ)"
+          # The radar workflow pushes to the same branch; retry behind it.
+          for attempt in 1 2 3 4; do
+            if git push; then exit 0; fi
+            echo "push failed (attempt $attempt); rebasing and retrying"
+            git pull --rebase --autostash || true
+            sleep $((2 ** attempt))
+          done
+          echo "could not push the state after 4 attempts"
+          exit 1
+
+      - name: Report failure to Telegram
+        # A drill agent that dies quietly is worse than none — you would assume
+        # you were simply having a quiet week.
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "Telegram not configured; skipping failure notice"
+            exit 0
+          fi
+          curl -sS -X POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+            -d "disable_web_page_preview=true" \
+            -d "text=⚠️ Interview drill run failed. ${RUN_URL}" > /dev/null

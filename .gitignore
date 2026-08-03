@@ -17,6 +17,9 @@ htmlcov/
 data/radar.db
 data/radar.db-wal
 data/radar.db-shm
+data/prep.db
+data/prep.db-wal
+data/prep.db-shm
 
 logs/
 unknown_companies.log
