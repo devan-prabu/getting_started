@@ -1,109 +1,107 @@
-# Who you are, what you are aiming at, and what the agent should drill.
-#
-# Everything above `adaptive:` is YOURS. Edit it freely — the agent reads it
-# every run and never rewrites it.
-#
-# Everything under `adaptive:` is MACHINE-MAINTAINED. `prep adapt` rewrites that
-# block from your answer history and from the commands you send the bot. Hand
-# edits there survive until the next adapt run, then get overwritten.
-#
-# Fields marked TODO were seeded from what the repo already knew about you.
-# Correct them once and the questions get sharper immediately.
-
 identity:
   name: Prabu Devan T R
   base: UAE
   current_employer: Proscape LLC
-  current_title: QA/QC Engineer # TODO confirm exact title on the CV
+  current_title: QA/QC Engineer
   current_project: Eden Hills Luxury Villas — landscape, hardscape, water features
-  years_total: null # TODO e.g. 7
-  years_gcc: null # TODO e.g. 4  (JDs asking "N yrs UAE/GCC" score against this)
-  education: BE Civil Engineering # TODO confirm
-  languages: [English, Tamil, Hindi]
-  licenses: [] # e.g. UAE driving licence, DM/DEWA/DCL approved engineer
-  notice_period_days: 30 # TODO confirm — it comes up in every HR screen
-
-# The move you are making. This is the single biggest driver of what gets asked.
+  years_total: null
+  years_gcc: null
+  education: BE Civil Engineering
+  languages:
+  - English
+  - Tamil
+  - Hindi
+  licenses: []
+  notice_period_days: 30
 target:
   primary_role: QA/QC Engineer — consultancy / PMC construction supervision
   secondary_role: QA/QC Engineer — contractor (listed / tier-1 main contractor)
   level: one step up from current — Senior QA/QC Engineer, Inspector, or ARE track
-  employer_types: [consultancy, pmc, listed_contractor]
-  emirates: [Dubai, Abu Dhabi]
-  # Why you are moving. The behavioural and salary drills are built from this,
-  # so keep it honest — it is never sent anywhere except into your own prompt.
-  motivation: >-
-    Move from contractor-side execution QA to the supervision/consultancy side,
-    with a title and package that reflect the delivery record on Eden Hills.
-  # Leave figures null if you would rather not store them; the negotiation drill
-  # then works in ranges instead of numbers.
+  employer_types:
+  - consultancy
+  - pmc
+  - listed_contractor
+  emirates:
+  - Dubai
+  - Abu Dhabi
+  motivation: Move from contractor-side execution QA to the supervision/consultancy side, with a title
+    and package that reflect the delivery record on Eden Hills.
   compensation:
-    current_aed_month: null # TODO
-    target_min_aed_month: null # TODO — the number you will not go below
-    target_stretch_aed_month: null # TODO
+    current_aed_month: null
+    target_min_aed_month: null
+    target_stretch_aed_month: null
     must_beat_current: true
-    non_salary_musts: [family status visa, annual ticket, medical for family]
-  # Roughly when you expect to be sitting in interviews. The mix shifts toward
-  # behavioural, company-specific and salary questions as this approaches.
-  interview_window_from: null # TODO e.g. 2026-09-01
-  # Tier-1 shortlist, kept in sync with the resume-job-matcher registry.
+    non_salary_musts:
+    - family status visa
+    - annual ticket
+    - medical for family
+  interview_window_from: null
   companies_tier1:
-    [Parsons, AECOM, KEO International Consultants, Egis Group, Stantec, WSP,
-     Jacobs, AtkinsRéalis, Mott MacDonald, Hill International, Turner & Townsend,
-     Arcadis, Mace, Bureau Veritas, Dar Al-Handasah, Khatib & Alami,
-     Capital Engineering Consultancy, Cracknell]
+  - Parsons
+  - AECOM
+  - KEO International Consultants
+  - Egis Group
+  - Stantec
+  - WSP
+  - Jacobs
+  - AtkinsRéalis
+  - Mott MacDonald
+  - Hill International
+  - Turner & Townsend
+  - Arcadis
+  - Mace
+  - Bureau Veritas
+  - Dar Al-Handasah
+  - Khatib & Alami
+  - Capital Engineering Consultancy
+  - Cracknell
   companies_tier2:
-    [Larsen & Toubro, Consolidated Contractors Company, Ssangyong E&C, NMDC Group,
-     ALEC, Shapoorji Pallonji, Convrgnt Value Engineering]
-
-# What you can already defend under pressure. Drilled less often, but never to
-# zero — an interviewer will open on your strongest ground.
+  - Larsen & Toubro
+  - Consolidated Contractors Company
+  - Ssangyong E&C
+  - NMDC Group
+  - ALEC
+  - Shapoorji Pallonji
+  - Convrgnt Value Engineering
 strengths:
-  - WIR / MIR / NCR / SOR / RFI registers and the full submittal cycle
-  - Landscape and hardscape execution QA — interlock, kerbs, banding concrete, subbase
-  - Water features, lagoons, pump rooms — waterproofing and water-tightness testing
-  - Shop drawing and material submittal coordination with the consultant
-  - ITP preparation and inspection sequencing on villa-scale landscape works
-
-# The honest list. These get the most airtime until the scores say otherwise.
+- WIR / MIR / NCR / SOR / RFI registers and the full submittal cycle
+- Landscape and hardscape execution QA — interlock, kerbs, banding concrete, subbase
+- Water features, lagoons, pump rooms — waterproofing and water-tightness testing
+- Shop drawing and material submittal coordination with the consultant
+- ITP preparation and inspection sequencing on villa-scale landscape works
 gaps:
-  - Consultant-side vocabulary — supervision duties, RE/ARE structure, FIDIC clauses
-  - ISO 9001:2015 clause-level answers (audits, CAR/PAR, management review)
-  - Defending a rejection to a contractor rather than receiving one
-  - Quantified achievements — rework %, first-time-pass rate, NCR closure time
-  - Salary negotiation and framing the Proscape exit without sounding negative
-
-# Interview stages you want covered. The scheduler rotates across these.
+- Consultant-side vocabulary — supervision duties, RE/ARE structure, FIDIC clauses
+- ISO 9001:2015 clause-level answers (audits, CAR/PAR, management review)
+- Defending a rejection to a contractor rather than receiving one
+- Quantified achievements — rework %, first-time-pass rate, NCR closure time
+- Salary negotiation and framing the Proscape exit without sounding negative
 stages:
-  - hr_screen
-  - technical
-  - consultant_panel
-  - client_facing
-  - behavioural
-
+- hr_screen
+- technical
+- consultant_panel
+- client_facing
+- behavioural
 delivery:
   timezone: Asia/Dubai
-  # Local hour the daily drill is sent. The workflow runs every 2 hours and
-  # sends the first time it is at or past this hour with nothing sent today.
   ask_hour_local: 20
   questions_per_day: 3
-  # Sunday gets a longer set — UAE working week starts Monday.
   weekend_questions: 5
-  weekend_days: [Saturday, Sunday]
-
+  weekend_days:
+  - Saturday
+  - Sunday
 adaptive:
   # ------------------------------------------------------------------
   # MACHINE-MAINTAINED — rewritten by `prep adapt`. Do not hand-edit.
   # ------------------------------------------------------------------
-  version: 1
-  updated_at: null
-  updated_reason: initial state, no answer history yet
-  # Topics pushed to the front of the queue, strongest signal first.
-  focus: []
-  # Topics parked because they are consistently scoring well.
+  version: 2
+  updated_at: '2026-08-04T17:38:21+00:00'
+  updated_reason: weak on qms_iso, inspection_requests, concrete
+  focus:
+  - qms_iso
+  - inspection_requests
+  - concrete
+  - earthworks
+  - landscape_hardscape
   resting: []
-  # 1 = gentle, 5 = panel-grilling. Moves with your scores and with /harder.
   difficulty: 3
-  # Free-text lines appended to the system prompt. Written by adapt from your
-  # /goal, /target and /cv commands and from measured weak points.
   notes: []
